@@ -11,6 +11,7 @@ namespace BulkyBook.DataAccess.Repository
 {
     public class Repository<T> : IRepository<T> where T : class
     {
+
         private readonly ApplicationDbContext _db;
         internal DbSet<T> dbSet;
 
@@ -19,6 +20,7 @@ namespace BulkyBook.DataAccess.Repository
             _db = db;
             this.dbSet = _db.Set<T>();
         }
+
         public void Add(T entity)
         {
             dbSet.Add(entity);
@@ -29,42 +31,48 @@ namespace BulkyBook.DataAccess.Repository
             return dbSet.Find(id);
         }
 
-        public IEnumerable<T> GetAll(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderby = null, string includeproperties = null)
+        public IEnumerable<T> GetAll(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, string includeProperties = null)
         {
             IQueryable<T> query = dbSet;
-            if(filter!=null)
-            {
-                query = query.Where(filter);
-            }
-            if (includeproperties != null)
-            {
-                foreach(var includeprop in includeproperties.Split(new char[] { ','}, StringSplitOptions.RemoveEmptyEntries))
-                {
-                    query = query.Include(includeprop);
-                }
-            }
-            if(orderby!=null)
-            {
-                return orderby(query).ToList();
-            }
-            return query.ToList();
-        }
 
-        public T GetFirstOrDefault(Expression<Func<T, bool>> filter = null, string includeproperties = null)
-        {
-            IQueryable<T> query = dbSet;
             if (filter != null)
             {
                 query = query.Where(filter);
             }
-            if (includeproperties!= null)
+
+            if (includeProperties != null)
             {
-                foreach (var includeprop in includeproperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                foreach (var includeProp in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
                 {
-                    query = query.Include(includeprop);
+                    query = query.Include(includeProp);
                 }
             }
-            
+
+            if (orderBy != null)
+            {
+                return orderBy(query).ToList();
+            }
+            return query.ToList();
+        }
+
+        public T GetFirstOrDefault(Expression<Func<T, bool>> filter = null, string includeProperties = null)
+        {
+            IQueryable<T> query = dbSet;
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            if (includeProperties != null)
+            {
+                foreach (var includeProp in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProp);
+                }
+            }
+
+
             return query.FirstOrDefault();
         }
 
