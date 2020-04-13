@@ -10,6 +10,7 @@ using BulkyBook.DataAccess.Repository.IRepository;
 using BulkyBook.DataAccess.Repository;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using BulkyBook.Utility;
+using System;
 
 namespace BulkyBook
 {
@@ -53,6 +54,16 @@ namespace BulkyBook
                 options.ClientId = "1041290397904-pjg7eati9uotmea5qd89c5ergp8v4pk1.apps.googleusercontent.com";
                 options.ClientSecret = "r13pHhm_YFrx73eeaNRnhZgq";
             });
+
+            services.AddSession(options =>
+            {
+
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+
+
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -76,7 +87,7 @@ namespace BulkyBook
 
             app.UseAuthentication();
             app.UseAuthorization();
-
+            app.UseSession();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
