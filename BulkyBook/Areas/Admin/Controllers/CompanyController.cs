@@ -54,12 +54,13 @@ namespace BulkyBook.Areas.Admin.Controllers
                 if(company.Id==0)
                 {
                     _unitOfWork.Company.Add(company);
-                    _unitOfWork.save();
+                    
                 }
                 else
                 {
                     _unitOfWork.Company.Update(company);
                 }
+                _unitOfWork.save();
                 return RedirectToAction(nameof(Index));
             }
             return View(company);
